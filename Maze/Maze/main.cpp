@@ -1,14 +1,6 @@
 #include "Maze.h"
 
-Maze* buildingLadder();
-
 int main()
-{
-	auto mazeLadder = buildingLadder();
-	mazeLadder->printMaze();	
-}
-
-Maze* buildingLadder()
 {
 	auto maze = new Maze(5, 5);
 	int x = 0;
@@ -25,5 +17,6 @@ Maze* buildingLadder()
 		x = x + 1;
 		y = y + 1;
 	}
-	return maze;
+
+	maze->printMaze();	
 }
