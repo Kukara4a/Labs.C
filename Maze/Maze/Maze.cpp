@@ -1,21 +1,10 @@
 #include "Maze.h"
+#include "MCell.h"
 #include <algorithm>
 #include <map>
 #include <iostream>
 
 using namespace std;
-
-bool MCell::right()
-{
-	return m_right;
-}
-
-bool MCell::down()
-{
-	return m_down;
-}
-
-MCell::MCell() {}
 
 Maze::Maze(int n, int m)
 {
