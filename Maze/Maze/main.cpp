@@ -1,10 +1,9 @@
 #include<iostream>
 #include "Maze.h"
 #include "MTreeNode.h"
+#include <vector>
 
 using namespace std;
-
-void creatingTree(MTreeNode* currentNode, Maze* maze, int i, int j, int** ar5x5);
 
 int main()
 {
@@ -36,9 +35,30 @@ int main()
 	for (int i = 0; i < 5; i++)
 		treeForPrinting[i] = new int[5];
 
-	MTreeNode* tree = MTreeNode::beginTree(0, 0);
-	creatingTree(tree, maze, 0, 0, treeForPrinting);
+	MTreeNode* currentNode = MTreeNode::beginTree(0, 0);
+	auto remembNodes = vector<MTreeNode*>(5);
+	bool flag = true;
 
+	for (int i = 0; i < 5; i++)	
+		for (int j = 0; j < 5; j++)
+		{
+			if (flag && (i != 0 || j != 0)) currentNode = currentNode->hasChild(i, j);
+			else if (i != 0 || j != 0) currentNode = remembNodes[j];
+			treeForPrinting[i][j] = currentNode->distance();
+			flag = false;
+			if (maze->hasConnection(i, j, i, j + 1))
+			{
+				currentNode->addChild(i, j + 1);
+				flag = true;
+			}
+
+			if (maze->hasConnection(i, j, i + 1, j))
+			{
+				currentNode->addChild(i + 1, j);
+				remembNodes[j] = currentNode->hasChild(i + 1, j);
+			}
+		}	
+	
 	for (int i = 0; i < 5; i++)
 	{
 		for (int j = 0; j < 5; j++)
@@ -46,20 +66,3 @@ int main()
 		cout << endl;
 	}
 }
-
-void creatingTree(MTreeNode* currentNode, Maze* maze, int i, int j, int** ar5x5)
-{
-	ar5x5[i][j] = currentNode->distance();
-	if (maze->hasConnection(i, j, i, j + 1))
-	{
-		currentNode->addChild(i, j + 1);
-		creatingTree(currentNode->hasChild(i, j + 1), maze, i, j + 1, ar5x5);
-	}
-
-	if (maze->hasConnection(i, j, i + 1, j))
-	{
-		currentNode->addChild(i + 1, j);
-		creatingTree(currentNode->hasChild(i + 1, j), maze, i + 1, j, ar5x5);
-	}
-}
-

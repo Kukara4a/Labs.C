@@ -61,6 +61,7 @@ MTreeNode* MTreeNode::hasChild(int i, int j)
 		if (child->m_i == i && child->m_j == j)
 			return child;
 	}
+	return this;
 }
 
 MTreeNode* MTreeNode::beginTree(int i, int j)

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "MCell.h"
 class Maze
 {
 private:

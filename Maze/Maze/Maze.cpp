@@ -1,5 +1,4 @@
 #include "Maze.h"
-#include "MCell.h"
 #include <algorithm>
 #include <map>
 #include <iostream>
