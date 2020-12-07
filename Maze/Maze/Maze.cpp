@@ -61,16 +61,16 @@ void Maze::printMaze()
 	{
 		for (int j = 0; j < m_n; j++)
 		{
-			int cell—ode = 0;
+			int cellCode = 0;
 			if (m_field[i * m_n + j].right())
-				cell—ode = cell—ode + 1000;
+				cellCode = cellCode + 1000;
 			if (m_field[i * m_n + j].down())
-				cell—ode = cell—ode + 100;
+				cellCode = cellCode + 100;
 			if (j - 1 >= 0 && m_field[i * m_n + j - 1].right())
-				cell—ode = cell—ode + 10;
+				cellCode = cellCode + 10;
 			if (i - 1 >= 0 && m_field[(i - 1) * m_n + j].down())
-				cell—ode = cell—ode + 1;
-			cout << mp[cell—ode];
+				cellCode = cellCode + 1;
+			cout << mp[cellCode];
 		}
 		cout << endl;
 	}
