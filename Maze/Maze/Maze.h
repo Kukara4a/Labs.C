@@ -7,6 +7,8 @@ private:
 	int m_n;
 	int m_m;
 public:
+	int getN() const;
+	int getM() const;
 	Maze(int n, int m);
 	~Maze();
 	const MCell& cell(int i, int j) const;

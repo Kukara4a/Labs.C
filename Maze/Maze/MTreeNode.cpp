@@ -1,4 +1,7 @@
 #include "MTreeNode.h"
+#include <map>
+
+using namespace std;
 
 MTreeNode::MTreeNode() {}
 
@@ -72,3 +75,36 @@ MTreeNode* MTreeNode::beginTree(int i, int j)
 	Tree->m_distance = 0;
 	return Tree;
 }
+
+MTreeNode* MTreeNode::searchNode(const MTreeNode& tree, const int i, const int j)
+{
+	auto currentNode = tree;
+
+	if (i == tree.m_i && j == tree.m_j)
+		return &currentNode;
+
+	map <tuple<int, int>, int> vPoints;
+
+	int k = 0;
+	while (true)
+	{
+		if (currentNode.hasChild(i, j) != &currentNode)
+			return currentNode.hasChild(i, j);	
+
+		if (currentNode.childCount() > k && vPoints[tuple<int, int>(currentNode.m_i, currentNode.m_j)] < 2)
+		{
+			vPoints[tuple<int, int>(currentNode.m_i, currentNode.m_j)] = vPoints[tuple<int, int>(currentNode.m_i, currentNode.m_j)] + 1;
+			currentNode = *currentNode.child(k);
+			k = 0;
+			continue;
+		}
+
+		else
+		{
+			currentNode = *currentNode.parent();
+			k = 1;
+		}
+	}
+}
+
+

@@ -1,68 +1,111 @@
 #include<iostream>
 #include "Maze.h"
 #include "MTreeNode.h"
+#include <ctime>
 #include <vector>
+#include <map>
+#include <stack>
 
 using namespace std;
 
+void buildFullMaze(Maze& iMaze, MTreeNode& tree);
+
 int main()
 {
-	auto maze = new Maze(5, 5);
-	int x = 0;
-	int y = 1;
-	for (int i = 0; i < 5; i++)
-	{
-		for (int j = 0; j < 5; j++)
+	srand(time(NULL));
+
+	int sizeX, sizeY;
+	cout << "Enter the dimensions of the maze, first the width, then the height: ";
+	cin >> sizeX >> sizeY;
+
+	int i = rand() % sizeY, j;
+	if (i == 0 || i == sizeY - 1) j = rand() % sizeX;
+	else if (rand() % 2 == 0)j = 0;
+	else j = sizeX - 1;
+
+	Maze* iMaze = new Maze(sizeX, sizeY);
+	MTreeNode* tree = MTreeNode::beginTree(i, j);
+
+	buildFullMaze(*iMaze, *tree);
+
+	int maxDist = -1;
+	int sumAllNode = 0;
+	for(int y = 0; y < sizeY; y++)
+		for (int x = 0; x < sizeX; x++)
 		{
-			if ((j == x && x < 4) || (j == y && y < 4))
-			{
-				maze->makeConnection(i, j, i, j + 1);
-				maze->makeConnection(i, j, i + 1, j);
-			}
-			if (((j == 0 || j == 1) && i < 4) || ((j == 2 || j == 4) && i == 3  ))
-				maze->makeConnection(i, j, i + 1, j);
-			if ((i == 0 && (j == 3 || j == 2)) || (j == 3 && i == 1))
-				maze->makeConnection(i, j, i, j + 1);
+			auto curNode = *(tree->searchNode(*tree, y, x));
+			int dist = curNode.distance();
+			sumAllNode = sumAllNode + dist;
+			if (maxDist < dist)
+				maxDist = dist;
 		}
-		x = x + 1;
-		y = y + 1;
+	cout << endl <<"Maximum weight of the node = " << maxDist << endl;
+	cout << "Average weight of the node = " << (sumAllNode/(sizeX*sizeY)) << endl;
+}
+
+void buildFullMaze(Maze& iMaze, MTreeNode& tree)
+{
+	map <tuple<int, int>, bool> pVisit;
+	stack <tuple<int, int>> prevPoints;
+
+	int n = iMaze.getN();
+	int m = iMaze.getM();
+
+	int i = tree.i(), j = tree.j();
+	auto currentNode = &tree;
+
+	int** treeForPrinting = new int* [m];
+	for (int k = 0; k <= m; k++)
+		treeForPrinting[k] = new int[n];
+
+	while (true)
+	{
+		if (pVisit.size() == n * m)
+			break;
+
+		treeForPrinting[i][j] = currentNode->distance();
+
+		pVisit[tuple<int, int>(j, i)] = true;
+
+		vector<tuple<int, int>> unvisitedNeighbors;
+		for (int y = -1; y <= 1; y++)
+			for (int x = -1; x <= 1; x++)
+				if (((x == -1 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1) || (x == 0 && y == -1)) &&
+					j + x >= 0 && i + y >= 0 && j + x < n && i + y < m && pVisit.count(tuple<int, int>(j + x, i + y)) == 0)
+					unvisitedNeighbors.push_back(tuple<int, int>(j + x, i + y));
+						
+		if (unvisitedNeighbors.size() == 0)
+		{
+			tuple<int, int> point = prevPoints.top();
+			prevPoints.pop();
+			j = get<0>(point);
+			i = get<1>(point);
+			currentNode = (MTreeNode*)currentNode->parent();
+			continue;
+		}
+
+		auto rndpoint = unvisitedNeighbors[rand() % unvisitedNeighbors.size()];
+
+		iMaze.makeConnection(i, j, get<1>(rndpoint), get<0>(rndpoint));		
+		prevPoints.push(tuple<int, int>(j, i));
+		j = get<0>(rndpoint);
+		i = get<1>(rndpoint);
+
+		currentNode->addChild(i, j);
+		currentNode = currentNode->hasChild(i, j);
 	}
 
-	maze->printMaze();
-	cout << endl;
+	(&iMaze)->printMaze();
+	printf("\n");
 
-	int** treeForPrinting = new int*[5];
-	for (int i = 0; i < 5; i++)
-		treeForPrinting[i] = new int[5];
+	const char* indent;
+	if (n * m <= 100) indent = "%3d";
+	else  indent = "%4d";
 
-	MTreeNode* currentNode = MTreeNode::beginTree(0, 0);
-	auto remembNodes = vector<MTreeNode*>(5);
-	bool flag = true;
-
-	for (int i = 0; i < 5; i++)	
-		for (int j = 0; j < 5; j++)
-		{
-			if (flag && (i != 0 || j != 0)) currentNode = currentNode->hasChild(i, j);
-			else if (i != 0 || j != 0) currentNode = remembNodes[j];
-			treeForPrinting[i][j] = currentNode->distance();
-			flag = false;
-			if (maze->hasConnection(i, j, i, j + 1))
-			{
-				currentNode->addChild(i, j + 1);
-				flag = true;
-			}
-
-			if (maze->hasConnection(i, j, i + 1, j))
-			{
-				currentNode->addChild(i + 1, j);
-				remembNodes[j] = currentNode->hasChild(i + 1, j);
-			}
-		}	
-	
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < m; i++)
 	{
-		for (int j = 0; j < 5; j++)
-			cout << treeForPrinting[i][j] << " ";
-		cout << endl;
+		for (int j = 0; j < n; j++)
+			printf(indent, treeForPrinting[i][j]);
+		printf("\n");
 	}
 }

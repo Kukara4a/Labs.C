@@ -5,6 +5,16 @@
 
 using namespace std;
 
+int Maze::getN() const
+{
+	return m_n;
+}
+
+int Maze::getM() const
+{
+	return m_m;
+}
+
 Maze::Maze(int n, int m)
 {
 	m_m = m;
