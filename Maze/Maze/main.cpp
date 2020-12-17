@@ -28,17 +28,38 @@ int main()
 
 	buildFullMaze(*iMaze, *tree);
 
+	iMaze->printMaze();
+	printf("\n");
+
+	int** treeForPrinting = new int* [sizeY];
+	for (int k = 0; k <= sizeY; k++)
+		treeForPrinting[k] = new int[sizeX];
+
 	int maxDist = -1;
 	int sumAllNode = 0;
+
 	for(int y = 0; y < sizeY; y++)
 		for (int x = 0; x < sizeX; x++)
-		{
+		{			
 			auto curNode = *(tree->searchNode(*tree, y, x));
+			treeForPrinting[y][x] = curNode.distance();
 			int dist = curNode.distance();
 			sumAllNode = sumAllNode + dist;
 			if (maxDist < dist)
 				maxDist = dist;
 		}
+
+	const char* indent;
+	if (sizeX * sizeY <= 100) indent = "%3d";
+	else  indent = "%4d";
+
+	for (int i = 0; i < sizeY; i++)
+	{
+		for (int j = 0; j < sizeX; j++)
+			printf(indent, treeForPrinting[i][j]);
+		printf("\n");
+	}
+
 	cout << endl <<"Maximum weight of the node = " << maxDist << endl;
 	cout << "Average weight of the node = " << (sumAllNode/(sizeX*sizeY)) << endl;
 }
@@ -54,16 +75,10 @@ void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 	int i = tree.i(), j = tree.j();
 	auto currentNode = &tree;
 
-	int** treeForPrinting = new int* [m];
-	for (int k = 0; k <= m; k++)
-		treeForPrinting[k] = new int[n];
-
 	while (true)
 	{
 		if (pVisit.size() == n * m)
 			break;
-
-		treeForPrinting[i][j] = currentNode->distance();
 
 		pVisit[tuple<int, int>(j, i)] = true;
 
@@ -93,19 +108,5 @@ void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 
 		currentNode->addChild(i, j);
 		currentNode = currentNode->hasChild(i, j);
-	}
-
-	(&iMaze)->printMaze();
-	printf("\n");
-
-	const char* indent;
-	if (n * m <= 100) indent = "%3d";
-	else  indent = "%4d";
-
-	for (int i = 0; i < m; i++)
-	{
-		for (int j = 0; j < n; j++)
-			printf(indent, treeForPrinting[i][j]);
-		printf("\n");
 	}
 }
