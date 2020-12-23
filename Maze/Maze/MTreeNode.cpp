@@ -1,110 +1,60 @@
 #include "MTreeNode.h"
-#include <map>
-
-using namespace std;
-
-MTreeNode::MTreeNode() {}
 
 MTreeNode::MTreeNode(MTreeNode* parent)
 {
+	m_i = 0;
+	m_j = 0;
 	m_parent = parent;
-	m_children = new MTreeNode[3];
-	if (parent != nullptr)
-		m_distance = parent->m_distance + 1;
-}
-
-int MTreeNode::i() const
-{
-	return m_i;
-}
-
-int MTreeNode::j() const
-{
-	return m_j;
-}
-
-const MTreeNode* MTreeNode::parent() const
-{
-	return m_parent;
-}
-
-const MTreeNode* MTreeNode::child(int i) const
-{
-	return &(m_children[i]);
-}
-
-int MTreeNode::distance() const
-{
-	return m_distance;
-}
-
-int MTreeNode::childCount() const
-{		
-	int result = 0;
-	for (int i = 0; i < 3; i++)
-		if (m_children[i].m_distance != -1)
-			result = result + 1;
-	return result;
+	m_children = vector<MTreeNode*>();
+	m_distance = parent == nullptr ? 0 : parent->distance() + 1;
 }
 
 bool MTreeNode::addChild(int i, int j)
 {
-	MTreeNode child = MTreeNode(this);
-	child.m_i = i;
-	child.m_j = j;	
-	m_children[childCount()] = child;
+	MTreeNode* child = new MTreeNode(this);
+	child->m_i = i;
+	child->m_j = j;
+	m_children.push_back(child);
 	return true;
 }
 
 MTreeNode* MTreeNode::hasChild(int i, int j)
 {
-	for (int k = 0; k < 3; k++)
+	for (int k = 0; k < childCount(); k++)
 	{
-		MTreeNode* child = &m_children[k];
-		if (child->m_i == i && child->m_j == j)
-			return child;
+		auto curNode = m_children[k];
+		if (curNode->m_i == i && curNode->m_j == j)
+			return curNode;
 	}
-	return this;
+	return nullptr;
 }
 
 MTreeNode* MTreeNode::beginTree(int i, int j)
 {
-	MTreeNode* Tree = new MTreeNode(nullptr);
-	Tree->m_j= j;
-	Tree->m_i = i;
-	Tree->m_distance = 0;
-	return Tree;
+	MTreeNode* tree = new MTreeNode(nullptr);
+	tree->m_j = j;
+	tree->m_i = i;
+	return tree;
 }
 
 MTreeNode* MTreeNode::searchNode(const MTreeNode& tree, const int i, const int j)
 {
-	auto currentNode = tree;
-
 	if (i == tree.m_i && j == tree.m_j)
-		return &currentNode;
+		return &(MTreeNode)tree;
 
-	map <tuple<int, int>, int> vPoints;
-
-	int k = 0;
-	while (true)
+	if (tree.childCount() > 0)
 	{
-		if (currentNode.hasChild(i, j) != &currentNode)
-			return currentNode.hasChild(i, j);	
+		auto result = ((MTreeNode)tree).hasChild(i, j);
+		if (result != nullptr)
+			return result;
 
-		if (currentNode.childCount() > k && vPoints[tuple<int, int>(currentNode.m_i, currentNode.m_j)] < 2)
+		for (auto node : tree.m_children)
 		{
-			vPoints[tuple<int, int>(currentNode.m_i, currentNode.m_j)] = vPoints[tuple<int, int>(currentNode.m_i, currentNode.m_j)] + 1;
-			currentNode = *currentNode.child(k);
-			k = 0;
-			continue;
-		}
-
-		else
-		{
-			currentNode = *currentNode.parent();
-			k = 1;
+			auto result = searchNode(*node, i, j);
+			if (result != nullptr)
+				return result;
 		}
 	}
+
+	return nullptr;
 }
-
-

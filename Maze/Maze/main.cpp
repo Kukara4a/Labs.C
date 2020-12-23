@@ -38,12 +38,12 @@ int main()
 	int maxDist = -1;
 	int sumAllNode = 0;
 
-	for(int y = 0; y < sizeY; y++)
+	for (int y = 0; y < sizeY; y++)
 		for (int x = 0; x < sizeX; x++)
-		{			
-			auto curNode = *(tree->searchNode(*tree, y, x));
-			treeForPrinting[y][x] = curNode.distance();
-			int dist = curNode.distance();
+		{
+			auto curNode = tree->searchNode(*tree, y, x);
+			treeForPrinting[y][x] = curNode->distance();
+			int dist = curNode->distance();
 			sumAllNode = sumAllNode + dist;
 			if (maxDist < dist)
 				maxDist = dist;
@@ -60,8 +60,8 @@ int main()
 		printf("\n");
 	}
 
-	cout << endl <<"Maximum weight of the node = " << maxDist << endl;
-	cout << "Average weight of the node = " << (sumAllNode/(sizeX*sizeY)) << endl;
+	cout << endl << "Maximum weight of the node = " << maxDist << endl;
+	cout << "Average weight of the node = " << (sumAllNode / (sizeX * sizeY)) << endl;
 }
 
 void buildFullMaze(Maze& iMaze, MTreeNode& tree)
@@ -88,7 +88,7 @@ void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 				if (((x == -1 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1) || (x == 0 && y == -1)) &&
 					j + x >= 0 && i + y >= 0 && j + x < n && i + y < m && pVisit.count(tuple<int, int>(j + x, i + y)) == 0)
 					unvisitedNeighbors.push_back(tuple<int, int>(j + x, i + y));
-						
+
 		if (unvisitedNeighbors.size() == 0)
 		{
 			tuple<int, int> point = prevPoints.top();
@@ -101,7 +101,7 @@ void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 
 		auto rndpoint = unvisitedNeighbors[rand() % unvisitedNeighbors.size()];
 
-		iMaze.makeConnection(i, j, get<1>(rndpoint), get<0>(rndpoint));		
+		iMaze.makeConnection(i, j, get<1>(rndpoint), get<0>(rndpoint));
 		prevPoints.push(tuple<int, int>(j, i));
 		j = get<0>(rndpoint);
 		i = get<1>(rndpoint);

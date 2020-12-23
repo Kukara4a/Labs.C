@@ -5,23 +5,6 @@
 
 using namespace std;
 
-int Maze::getN() const
-{
-	return m_n;
-}
-
-int Maze::getM() const
-{
-	return m_m;
-}
-
-Maze::Maze(int n, int m)
-{
-	m_m = m;
-	m_n = n;
-	m_field = new MCell[n * m];
-}
-
 Maze::~Maze()
 {
 	for (int i = 0; i < m_m * m_n; i++)
@@ -29,12 +12,8 @@ Maze::~Maze()
 	delete[] m_field;
 }
 
-const MCell& Maze::cell(int i, int j) const
-{
-	return m_field[i * m_n + j];
-}
 
-bool Maze::hasConnection(int i1, int j1, int i2, int j2)
+bool Maze::hasConnection(int i1, int j1, int i2, int j2) const
 {
 	if (i1 == i2)
 		return m_field[i1 * m_n + min(j1, j2)].right();
@@ -42,7 +21,7 @@ bool Maze::hasConnection(int i1, int j1, int i2, int j2)
 		return m_field[min(i1, i2) * m_n + j1].down();
 }
 
-bool Maze::makeConnection(int i1, int j1, int i2, int j2)
+bool Maze::makeConnection(int i1, int j1, int i2, int j2) const
 {
 	if (i1 == i2)
 		m_field[i1 * m_n + min(j1, j2)].m_right = true;
@@ -51,7 +30,7 @@ bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 	return true;
 }
 
-bool Maze::removeConnection(int i1, int j1, int i2, int j2)
+bool Maze::removeConnection(int i1, int j1, int i2, int j2) const
 {
 	if (i1 == i2)
 		m_field[i1 * m_n + min(j1, j2)].m_right = false;
@@ -60,7 +39,7 @@ bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 	return true;
 }
 
-void Maze::printMaze()
+void Maze::printMaze() const
 {
 	map<int, char> mp = { {1000, '0'}, {100, '0'}, {10, '0'}, {1, '0'},
 						  {1100, char(218)}, {1010, char(196)}, {0, '0'}, {11, char(217)},
