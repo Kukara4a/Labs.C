@@ -50,8 +50,8 @@ void Maze::printMaze() const
 		{
 			int cellCode = 0;
 			if (m_field[i * m_n + j].right())
-				cellCode = cellCode + 1000;							// 4 единицы - 4 стороны, 1000 - имеет связь справа, 
-			if (m_field[i * m_n + j].down())						// 0100 - связь снизу, 0010 - связь слева, 0001 - связь сверху
+				cellCode = cellCode + 1000;							// 1000 - right, 0100 - down, 0010 - left, 0001 - up
+			if (m_field[i * m_n + j].down())					
 				cellCode = cellCode + 100;							
 			if (j - 1 >= 0 && m_field[i * m_n + j - 1].right())
 				cellCode = cellCode + 10;

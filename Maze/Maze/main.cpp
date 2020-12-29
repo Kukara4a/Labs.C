@@ -11,30 +11,31 @@ void printTree(int sizeY, int sizeX, int** treeForPrinting);
 
 int main()
 {
+	setlocale(LC_ALL, "Russian");
 	srand(time(NULL));
 
-	int sizeX, sizeY;																	//задаём размеры лабиринта
+	int sizeX, sizeY;																	//setting the size of the maze
 	cout << "Enter the dimensions of the maze, first the width, then the height: "; 
 	cin >> sizeX >> sizeY;
 
-	int i = rand() % sizeY, j;															//генерируем случайные координаты входа в лабиринт
+	int i = rand() % sizeY, j;															//generate random coordinates of the entrance to maze
 	if (i == 0 || i == sizeY - 1) j = rand() % sizeX;
 	else if (rand() % 2 == 0)j = 0;
 	else j = sizeX - 1;
 
-	Maze iMaze = Maze(sizeX, sizeY);													//создаем лабиринт и дерево
+	Maze iMaze = Maze(sizeX, sizeY);													//creating a maze and a tree
 	MTreeNode tree = *MTreeNode::beginTree(i, j);
 
-	buildFullMaze(iMaze, tree);															//строим случайный лабиринт и дерево
+	buildFullMaze(iMaze, tree);															//building a random maze and tree
 
-	iMaze.printMaze();																	//выводим на консоль лабиринт
+	iMaze.printMaze();																	//output maze to the console
 	printf("\n");
 
-	int** treeForPrinting = new int* [sizeY];											//создаем массив весов, чтобы вывести
-	for (int k = 0; k <= sizeY; k++)													//на косноль веса дерева
+	int** treeForPrinting = new int* [sizeY];											//creating an array 
+	for (int k = 0; k <= sizeY; k++)													//to output tree weights to the console
 		treeForPrinting[k] = new int[sizeX];
 
-	int maxDist = -1;																	//считаем максимыльный вес и средний вес
+	int maxDist = -1;																	//count the maximum weight and the average weight
 	int sumAllNode = 0;
 
 	for (int y = 0; y < sizeY; y++)
@@ -48,9 +49,9 @@ int main()
 				maxDist = dist;
 		}
 
-	printTree(sizeY, sizeX, treeForPrinting);											//выводим на консоль дерево
+	printTree(sizeY, sizeX, treeForPrinting);											//output tree to the console
 
-	cout << endl << "Maximum weight of the node = " << maxDist << endl;					//выводим на консоль максимыльный вес и средний вес
+	cout << endl << "Maximum weight of the node = " << maxDist << endl;					//output maximum weight and average weight on the console
 	cout << "Average weight of the node = " << (sumAllNode / (sizeX * sizeY)) << endl;
 }
 
@@ -76,7 +77,7 @@ void buildFullMaze(Maze& iMaze, MTreeNode& tree)
 	{
 		int i = currentNode->i();
 		int j = currentNode->j();
-		auto possibleDirections = new vector<int>(); //0 - вверх, 1 - вправо, 2 - вниз, 3 - влево
+		auto possibleDirections = new vector<int>(); //0 - up, 1 - right, 2 - down, 3 - left
 
 		if (!(!iMaze.cellInMaze(i - 1, j)										
 			|| iMaze.hasConnection(i - 1, j, i - 2, j) || iMaze.hasConnection(i - 1, j, i, j)

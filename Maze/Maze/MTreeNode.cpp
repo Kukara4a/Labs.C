@@ -55,7 +55,7 @@ bool elementInVector(vector<int> vect, int element)
 
 MTreeNode* MTreeNode::searchNode(MTreeNode& tree, const int i, const int j)
 {
-	auto currentNode = &tree;			//у меня тут была рекурсия, посторался переделать её в цикл
+	auto currentNode = &tree;			
 	auto visitedP = vector<int>();		
 
 	if (tree.m_i == i && tree.m_j == j) 
